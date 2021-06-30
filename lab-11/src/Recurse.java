@@ -1,10 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class Recurse extends JComponent {
 
-    private int displayHeight = 800;
-    private int displayWidth = 800;
+    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+    private int displayHeight = screenSize.height - 72;
+    private int displayWidth = displayHeight;
 
     private int AX = displayWidth / 2;
     private int AY = 0;
@@ -116,10 +121,31 @@ public class Recurse extends JComponent {
     }
 
     public static void main(String[] args) {
+        Recurse r = new Recurse();
+        r.drawTriangle(r);
+    }
+
+    private Recurse() {
+
+    }
+
+    private void drawTriangle(Recurse r) {
         JFrame jFrame = new JFrame();
-        jFrame.add(new Recurse());
+        jFrame.add(r);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.pack();
         jFrame.setVisible(true);
+        jFrame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Component c = (Component)e.getSource();
+                displayHeight = c.getHeight() - 39;
+                AX = displayHeight / 2;
+                BX = displayHeight;
+                BY = displayHeight;
+                CY = displayHeight;
+                points = new int[][]{{AX, AY}, {BX, BY}, {CX, CY}};
+            }
+        });
     }
 }
